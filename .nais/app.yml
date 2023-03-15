@@ -29,3 +29,14 @@ spec:
   prometheus:
     enabled: true
     path: /metrics
+  env:
+    - name: MONITOR_LOG_FORMAT
+      value: json
+    - name: MONITOR_LOG_LEVEL
+      value: INFO
+    - name: MONITOR_GROUP_IDS
+      value: >-
+        15f9ea54-1987-475c-a0d5-f0e1a0e3f811,
+        48120347-8582-4329-8673-7beb3ed6ca06,
+        76e9ee7e-2cd1-4814-b199-6c0be007d7b4,
+        eb5c5556-6c9a-4e54-83fc-f70cae25358d
