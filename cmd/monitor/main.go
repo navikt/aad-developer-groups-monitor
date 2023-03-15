@@ -57,8 +57,6 @@ func run(cfg *config.Config, log *logrus.Logger) error {
 	bt, _ := version.BuildTime()
 	log.Infof("aad-developer-groups-monitor version %s built on %s", version.Version(), bt)
 
-	azureClient := getAzureAdApiClient(ctx, cfg.Azure)
-
 	go func() {
 		addr := cfg.Http.ListenAddress
 		httpServer := getHttpServer(addr)
@@ -80,11 +78,8 @@ func run(cfg *config.Config, log *logrus.Logger) error {
 		cancel()
 	}()
 
+	azureClient := getAzureAdApiClient(ctx, cfg.Azure)
 	metricsTimer := time.NewTimer(1 * time.Second)
-	if len(cfg.Groups) == 0 {
-		log.Warnf("no group IDs specified, metrics will not be updated")
-		metricsTimer.Stop()
-	}
 
 	for ctx.Err() == nil {
 		select {
