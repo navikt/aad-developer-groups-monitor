@@ -1,4 +1,4 @@
-name: Build and push
+name: Build, push and deploy
 on: push
 jobs:
   build:
@@ -19,3 +19,20 @@ jobs:
           team: utvikleropplevelse
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    name: Deploy to prod-gcp
+    runs-on: ubuntu-22.04
+    needs:
+      - build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Deploy application to prod-gcp
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/app.yaml
+          VAR: image=${{ needs.build.outputs.image }}
