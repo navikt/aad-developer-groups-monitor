@@ -19,8 +19,6 @@ import (
 	"github.com/navikt/aad-developer-groups-monitor/pkg/version"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/oauth2/clientcredentials"
-	"golang.org/x/oauth2/microsoft"
 )
 
 const (
@@ -31,7 +29,8 @@ const (
 )
 
 func main() {
-	cfg, err := config.New()
+	ctx := context.Background()
+	cfg, err := config.New(ctx)
 	if err != nil {
 		fmt.Printf("load config: %s", err)
 		os.Exit(exitConfigError)
@@ -43,15 +42,15 @@ func main() {
 		os.Exit(exitLoggerError)
 	}
 
-	err = run(cfg, log)
+	err = run(ctx, cfg, log)
 	if err != nil {
 		log.WithError(err).Errorf("error in run()")
 		os.Exit(exitRunError)
 	}
 }
 
-func run(cfg *config.Config, log *logrus.Logger) error {
-	ctx, cancel := context.WithCancel(context.Background())
+func run(ctx context.Context, cfg *config.Config, log *logrus.Logger) error {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
 	bt, _ := version.BuildTime()
@@ -78,7 +77,7 @@ func run(cfg *config.Config, log *logrus.Logger) error {
 		cancel()
 	}()
 
-	azureClient := getAzureAdApiClient(ctx, cfg.Azure)
+	azureClient := azureclient.NewFromConfig(ctx, cfg.Azure)
 	metricsTimer := time.NewTimer(1 * time.Second)
 
 	for ctx.Err() == nil {
@@ -114,19 +113,6 @@ func run(cfg *config.Config, log *logrus.Logger) error {
 	}
 
 	return nil
-}
-
-func getAzureAdApiClient(ctx context.Context, cfg config.Azure) azureclient.Client {
-	endpoint := microsoft.AzureADEndpoint(cfg.TenantID)
-	conf := clientcredentials.Config{
-		ClientID:     cfg.ClientID,
-		ClientSecret: cfg.ClientSecret,
-		TokenURL:     endpoint.TokenURL,
-		AuthStyle:    endpoint.AuthStyle,
-		Scopes:       []string{"https://graph.microsoft.com/.default"},
-	}
-
-	return azureclient.New(conf.Client(ctx))
 }
 
 func getHttpServer(addr string) *http.Server {

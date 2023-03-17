@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/sethvargo/go-envconfig"
 )
@@ -45,9 +46,9 @@ type Config struct {
 	Groups []uuid.UUID `env:"MONITOR_GROUP_IDS,required"`
 }
 
-func New() (*Config, error) {
+func New(ctx context.Context) (*Config, error) {
 	cfg := &Config{}
-	err := envconfig.Process(context.TODO(), cfg)
+	err := envconfig.Process(ctx, cfg)
 	if err != nil {
 		return nil, err
 	}
