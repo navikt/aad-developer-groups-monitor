@@ -7,13 +7,13 @@ import (
 
 type Azure struct {
 	// TenantID The ID of the Azure AD tenant where the groups exist
-	TenantID string `envconfig:"MONITOR_AZURE_TENANT_ID" required:"true"`
+	TenantID string `envconfig:"AZURE_APP_TENANT_ID" required:"true"`
 
 	// ClientID The ID of the API client
-	ClientID string `envconfig:"MONITOR_AZURE_CLIENT_ID" required:"true"`
+	ClientID string `envconfig:"AZURE_APP_CLIENT_ID" required:"true"`
 
 	// ClientSecret The secret of the API client
-	ClientSecret string `envconfig:"MONITOR_AZURE_CLIENT_SECRET" required:"true"`
+	ClientSecret string `envconfig:"AZURE_APP_CLIENT_SECRET" required:"true"`
 }
 
 type Http struct {
