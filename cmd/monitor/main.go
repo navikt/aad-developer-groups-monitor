@@ -22,10 +22,10 @@ import (
 )
 
 const (
-	getMetricsInterval = time.Minute * 30
-	exitConfigError    = 1
-	exitLoggerError    = 2
-	exitRunError       = 3
+	updateMetricsInterval = time.Minute * 5
+	exitConfigError       = 1
+	exitLoggerError       = 2
+	exitRunError          = 3
 )
 
 func main() {
@@ -107,8 +107,8 @@ func run(ctx context.Context, cfg *config.Config, log *logrus.Logger) error {
 			}
 
 			wg.Wait()
-			log.Debugf("metrics updated, next update at %s...", time.Now().Add(getMetricsInterval))
-			metricsTimer.Reset(getMetricsInterval)
+			log.Debugf("metrics updated, next update at %s...", time.Now().Add(updateMetricsInterval))
+			metricsTimer.Reset(updateMetricsInterval)
 		}
 	}
 
