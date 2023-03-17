@@ -30,6 +30,8 @@ spec:
     enabled: true
     path: /metrics
   env:
+    - name: MONITOR_HTTP_LISTEN_ADDRESS
+      value: 0.0.0.0:3000
     - name: MONITOR_LOG_FORMAT
       value: json
     - name: MONITOR_LOG_LEVEL
