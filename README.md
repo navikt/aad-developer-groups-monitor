@@ -1,5 +1,7 @@
 # Azure AD developer groups monitor
 
+[![Build, push and deploy](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/ci.yaml/badge.svg)](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/ci.yaml)
+
 Provide member count metrics for the developer groups in Azure AD.
 
 ## Developer groups
