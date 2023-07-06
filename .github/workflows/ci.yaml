@@ -34,5 +34,5 @@ jobs:
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: .nais/app.yaml
+          RESOURCE: .nais/app.yaml,.nais/alerts.yaml
           VAR: image=${{ needs.build.outputs.image }}

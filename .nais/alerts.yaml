@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: aad-developer-groups-update-alert
+  namespace: utvikleropplevelse
+  labels:
+    team: utvikleropplevelse
+spec:
+  groups:
+    - name: my-alert
+      rules:
+        - alert: Developer group changed
+          expr: abs(delta(navikt_aad_developer_groups_monitor_developers[10m])) > 5
+          for: 5m
+          annotations:
+            consequence: Developer group {{ $labels.groupName }} has had a rapid change in member count
+            action: Check dynamic query for the {{ $labels.groupName }} group
+            summary: |-
+              Someone :tm: has changed the data in AD or one of the other systems that identifies our developers. To fix
+              the issue please check the values in the dynamic query for the *{{ $labels.groupName }}* group.
+          labels:
+            namespace: utvikleropplevelse
+            severity: critical
