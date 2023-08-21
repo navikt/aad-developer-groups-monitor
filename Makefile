@@ -5,7 +5,7 @@ LDFLAGS := -X github.com/navikt/aad-developer-groups-monitor/pkg/version.Revisio
 
 .PHONY: monitor test fmt check alpine
 
-all: monitor
+all: test check fmt monitor
 
 monitor:
 	go build -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/*.go
@@ -18,7 +18,7 @@ fmt:
 
 check:
 	go run honnef.co/go/tools/cmd/staticcheck ./...
-	go run golang.org/x/vuln/cmd/govulncheck -v ./...
+	go run golang.org/x/vuln/cmd/govulncheck ./...
 
 alpine:
 	go build -a -installsuffix cgo -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/main.go
