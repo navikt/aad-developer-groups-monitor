@@ -17,7 +17,6 @@ Currently we are monitoring the following groups:
 | `eb5c5556-6c9a-4e54-83fc-f70cae25358d` | Utviklere i IT utvikling (interne)  |
 | `76e9ee7e-2cd1-4814-b199-6c0be007d7b4` | Utviklere i IT utvikling (eksterne) |
 | `48120347-8582-4329-8673-7beb3ed6ca06` | Utviklere i Data (interne)          |
-| `15f9ea54-1987-475c-a0d5-f0e1a0e3f811` | Utviklere i Data (eksterne)         |
 
 ### Monitoring new groups
 
