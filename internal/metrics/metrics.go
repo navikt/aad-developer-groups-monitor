@@ -8,7 +8,7 @@ import (
 const (
 	namespace  = "navikt"
 	subsystem  = "aad_developer_groups_monitor"
-	labelGroup = "groupName"
+	labelGroup = "group_name"
 )
 
 var developers = promauto.NewGaugeVec(prometheus.GaugeOpts{
