@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/azureclient"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/test"
+	"github.com/navikt/aad-developer-groups-monitor/internal/azureclient"
+	"github.com/navikt/aad-developer-groups-monitor/internal/test"
 	"github.com/stretchr/testify/assert"
 )
 

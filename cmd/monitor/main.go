@@ -12,11 +12,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/azureclient"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/config"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/logger"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/metrics"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/version"
+	"github.com/navikt/aad-developer-groups-monitor/internal/azureclient"
+	"github.com/navikt/aad-developer-groups-monitor/internal/config"
+	"github.com/navikt/aad-developer-groups-monitor/internal/logger"
+	"github.com/navikt/aad-developer-groups-monitor/internal/metrics"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
@@ -52,9 +51,6 @@ func main() {
 func run(ctx context.Context, cfg *config.Config, log *logrus.Logger) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-
-	bt, _ := version.BuildTime()
-	log.Infof("aad-developer-groups-monitor version %s built on %s", version.Version(), bt)
 
 	go func() {
 		addr := cfg.Http.ListenAddress

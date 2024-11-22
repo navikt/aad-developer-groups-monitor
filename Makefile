@@ -1,24 +1,24 @@
-BUILDTIME = $(shell date "+%s")
-DATE = $(shell date "+%Y-%m-%d")
-LAST_COMMIT = $(shell git rev-parse --short HEAD)
-LDFLAGS := -X github.com/navikt/aad-developer-groups-monitor/pkg/version.Revision=$(LAST_COMMIT) -X github.com/navikt/aad-developer-groups-monitor/pkg/version.Date=$(DATE) -X github.com/navikt/aad-developer-groups-monitor/pkg/version.BuildUnixTime=$(BUILDTIME)
+.PHONY: fmt test check staticcheck vulncheck deadcode build
 
-.PHONY: monitor test fmt check alpine
+all: fmt test check build
 
-all: test check fmt build
-
-build:
-	go build -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/*.go
+fmt:
+	go run mvdan.cc/gofumpt@latest -w ./
 
 test:
 	go test ./...
 
-fmt:
-	go run mvdan.cc/gofumpt -w ./
+check: staticcheck vulncheck deadcode
 
-check:
-	go run honnef.co/go/tools/cmd/staticcheck ./...
-	go run golang.org/x/vuln/cmd/govulncheck ./...
+staticcheck:
+	go run honnef.co/go/tools/cmd/staticcheck@latest ./...
 
-alpine:
-	go build -a -installsuffix cgo -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/main.go
+vulncheck:
+	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+
+deadcode:
+	go run golang.org/x/tools/cmd/deadcode@latest -test ./...
+
+build:
+	go build -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/*.go
+

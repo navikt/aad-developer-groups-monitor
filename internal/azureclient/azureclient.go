@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/navikt/aad-developer-groups-monitor/pkg/config"
+	"github.com/navikt/aad-developer-groups-monitor/internal/config"
 	"golang.org/x/oauth2/clientcredentials"
 	"golang.org/x/oauth2/microsoft"
 )

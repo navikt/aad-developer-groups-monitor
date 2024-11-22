@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/navikt/aad-developer-groups-monitor/pkg/config"
+	"github.com/navikt/aad-developer-groups-monitor/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
