@@ -7,7 +7,7 @@ metadata:
     team: utvikleropplevelse
 spec:
   groups:
-    - name: my-alert
+    - name: aad-developer-groups-update-alert
       rules:
         - alert: Developer group changed
           expr: abs(delta(navikt_aad_developer_groups_monitor_developers[10m])) > 5
