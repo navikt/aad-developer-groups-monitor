@@ -35,7 +35,7 @@ spec:
     - name: MONITOR_LOG_FORMAT
       value: json
     - name: MONITOR_LOG_LEVEL
-      value: INFO
+      value: info
     - name: MONITOR_GROUP_IDS
       value: >-
         48120347-8582-4329-8673-7beb3ed6ca06,

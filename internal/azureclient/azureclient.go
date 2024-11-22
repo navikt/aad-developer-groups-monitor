@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/navikt/aad-developer-groups-monitor/internal/config"
 	"golang.org/x/oauth2/clientcredentials"
 	"golang.org/x/oauth2/microsoft"
 )
@@ -27,11 +26,11 @@ type client struct {
 	client *http.Client
 }
 
-func NewFromConfig(ctx context.Context, cfg config.Azure) Client {
-	endpoint := microsoft.AzureADEndpoint(cfg.TenantID)
+func NewFromConfig(ctx context.Context, tenantID, clientID, clientSecret string) Client {
+	endpoint := microsoft.AzureADEndpoint(tenantID)
 	conf := clientcredentials.Config{
-		ClientID:     cfg.ClientID,
-		ClientSecret: cfg.ClientSecret,
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
 		TokenURL:     endpoint.TokenURL,
 		AuthStyle:    endpoint.AuthStyle,
 		Scopes:       []string{"https://graph.microsoft.com/.default"},

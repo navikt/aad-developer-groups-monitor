@@ -20,5 +20,5 @@ deadcode:
 	go run golang.org/x/tools/cmd/deadcode@latest -test ./...
 
 build:
-	go build -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/*.go
+	go build -o ./bin/monitor ./cmd/monitor
 
