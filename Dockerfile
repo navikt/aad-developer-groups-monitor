@@ -1,21 +1,11 @@
-FROM golang:1.21-alpine as builder
-RUN apk add --no-cache git make curl build-base
-ENV GOOS=linux
-
+FROM golang:1.23-alpine as builder
 WORKDIR /src
-
-COPY go.mod ./
-COPY go.sum ./
+COPY go.* ./
 RUN go mod download
+COPY . .
+RUN go build -o ./bin/monitor ./cmd/monitor
 
-COPY . ./
-RUN make test
-RUN make check
-RUN make alpine
-
-FROM alpine:3.17
-RUN apk add --no-cache ca-certificates tzdata
-RUN export PATH=$PATH:/app
+FROM gcr.io/distroless/base
 WORKDIR /app
 COPY --from=builder /src/bin/monitor /app/monitor
 CMD ["/app/monitor"]

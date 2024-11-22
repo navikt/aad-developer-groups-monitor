@@ -1,6 +1,6 @@
 module github.com/navikt/aad-developer-groups-monitor
 
-go 1.20
+go 1.23
 
 require (
 	github.com/go-chi/chi v1.5.4

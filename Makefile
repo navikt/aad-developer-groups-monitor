@@ -5,9 +5,9 @@ LDFLAGS := -X github.com/navikt/aad-developer-groups-monitor/pkg/version.Revisio
 
 .PHONY: monitor test fmt check alpine
 
-all: test check fmt monitor
+all: test check fmt build
 
-monitor:
+build:
 	go build -o bin/monitor -ldflags "-s $(LDFLAGS)" cmd/monitor/*.go
 
 test:
