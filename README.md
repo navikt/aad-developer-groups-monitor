@@ -1,16 +1,16 @@
-# Azure AD developer groups monitor
+# Entra ID developer groups monitor
 
-[![Build, push and deploy](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/ci.yaml/badge.svg)](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/ci.yaml)
+[![Build, push and deploy](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/main.yaml/badge.svg)](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/main.yaml)
 
 Provide member count metrics for the developer groups in Azure AD.
 
 ## Developer groups
 
-The so called developer groups are dynamic groups that is used to grant access to for instance GitHub and/or Google Cloud Platform through a set of enterprise applications in Azure AD. The queries these dynamic groups use rely on information synced from various other systems, and these values have previously been changed without notification, which results in numerous developers losing access to critical systems.
+The so-called developer groups are dynamic groups that is used to grant access to for instance GitHub and/or Google Cloud Platform through a set of enterprise applications in Entra ID. The queries these dynamic groups use rely on information synced from various other systems, and these values have previously been changed without notification, which results in numerous developers losing access to critical systems.
 
 The metrics are used to alert the NAIS team if the member count changes with an abnormal amount, so that we can remediate the issue as quick as possible.
 
-Currently we are monitoring the following groups:
+Currently, we are monitoring the following groups:
 
 | Object ID                              | Name                                |
 |:---------------------------------------|:------------------------------------|
@@ -20,7 +20,7 @@ Currently we are monitoring the following groups:
 
 ### Monitoring new groups
 
-The [Azure AD application registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/b717aab4-93af-4c12-b5fe-fece33142d10/isMSAApp~/false) used to access the Graph API must be added as an owner to the groups we want to monitor. When adding a new group to the list of groups to monitor, remember to make the app reg an owner of that group as well. The list of groups to monitor can be found in the [NAIS spec](.nais/app.yaml).
+The [Entra ID application registration](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/b717aab4-93af-4c12-b5fe-fece33142d10/isMSAApp~/false) used to access the [Microsoft Graph API](https://learn.microsoft.com/en-us/graph/) must be added as an owner to the groups we want to monitor. When adding a new group to the list of groups to monitor, remember to make the application registration an owner of that group as well. The list of groups to monitor can be found in the [NAIS spec](.nais/app.yaml).
 
 ## License
 
