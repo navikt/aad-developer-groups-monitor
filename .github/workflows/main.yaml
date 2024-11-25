@@ -13,6 +13,8 @@ jobs:
       contents: read
       id-token: write
     steps:
+      - id: go_version
+        run: echo "go_version=$(cat .tool-versions | grep golang | awk '{print $2}')" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v4
       - uses: asdf-vm/actions/setup@v3
       - uses: asdf-vm/actions/install@v3
@@ -25,6 +27,8 @@ jobs:
       - uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
+          build_args: |
+            GO_VERSION=${{ steps.go_version.outputs.go_version }}-
           team: utvikleropplevelse
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
@@ -35,9 +39,8 @@ jobs:
       - build
     steps:
       - uses: actions/checkout@v4
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
           RESOURCE: .nais/app.yaml,.nais/alerts.yaml
           VAR: image=${{ needs.build.outputs.image }}
