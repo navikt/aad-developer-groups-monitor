@@ -15,13 +15,13 @@ spec:
           annotations:
             summary: >-
               Someone has changed the data in AD or one of the other systems that identifies our developers. To fix
-              the issue please check the values in the dynamic query for the `{{ $labels.group_name }}` group.
+              the issue please check the values in the dynamic query for the `\{{ $labels.group_name }}` group.
               
-              The ID of the group is `{{ $labels.group_id }}`.
+              The ID of the group is `\{{ $labels.group_id }}`.
             consequence: |-
               Developers might lose access to one or more services if they are removed from the developers groups.
             action: |
-              Check dynamic query for the `{{ $labels.group_name }}` group with the ID `{{ $labels.group_id }}`.
+              Check dynamic query for the `\{{ $labels.group_name }}` group with the ID `\{{ $labels.group_id }}`.
           labels:
             namespace: utvikleropplevelse
             severity: critical
