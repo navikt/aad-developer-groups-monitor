@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -65,8 +66,7 @@ func run(ctx context.Context, cfg *Config, log logrus.FieldLogger) error {
 		httpServer := getHttpServer(addr)
 		log.Infof("ready to accept requests at %s", addr)
 
-		err := httpServer.ListenAndServe()
-		if err != http.ErrServerClosed {
+		if err := httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.WithError(err).Errorf("unexpected HTTP server error")
 		}
 		log.Info("HTTP server finished, terminating...")
