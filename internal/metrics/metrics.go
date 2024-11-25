@@ -1,14 +1,14 @@
 package metrics
 
 import (
+	"github.com/google/uuid"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 const (
-	namespace  = "navikt"
-	subsystem  = "aad_developer_groups_monitor"
-	labelGroup = "group_name"
+	namespace = "navikt"
+	subsystem = "aad_developer_groups_monitor"
 )
 
 var developers = promauto.NewGaugeVec(prometheus.GaugeOpts{
@@ -16,10 +16,11 @@ var developers = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Subsystem: subsystem,
 	Name:      "developers",
 	Help:      "Number of developers, labeled with group name",
-}, []string{labelGroup})
+}, []string{"group_name", "group_id"})
 
-func SetDeveloperCount(numDevelopers int, groupName string) {
+func SetDeveloperCount(numDevelopers int, groupName string, groupID uuid.UUID) {
 	developers.With(prometheus.Labels{
-		labelGroup: groupName,
+		"group_name": groupName,
+		"group_id":   groupID.String(),
 	}).Set(float64(numDevelopers))
 }

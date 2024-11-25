@@ -3,7 +3,6 @@ package monitor
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -39,13 +38,13 @@ func Run(ctx context.Context) {
 
 	cfg, err := newConfig(ctx)
 	if err != nil {
-		fmt.Printf("load config: %s", err)
+		log.WithError(err).Errorf("error when loading config")
 		os.Exit(exitCodeConfigError)
 	}
 
 	appLogger, err := newLogger(cfg.Log.Format, cfg.Log.Level)
 	if err != nil {
-		fmt.Printf("create logger: %s", err)
+		log.WithError(err).Errorf("creating application logger")
 		os.Exit(exitCodeLoggerError)
 	}
 
@@ -64,7 +63,7 @@ func run(ctx context.Context, cfg *Config, log logrus.FieldLogger) error {
 	go func() {
 		addr := cfg.Http.ListenAddress
 		httpServer := getHttpServer(addr)
-		log.Infof("ready to accept requests at %s", addr)
+		log.WithField("addr", addr).Infof("ready to accept requests")
 
 		if err := httpServer.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 			log.WithError(err).Errorf("unexpected HTTP server error")
@@ -77,46 +76,44 @@ func run(ctx context.Context, cfg *Config, log logrus.FieldLogger) error {
 		signals := make(chan os.Signal, 1)
 		signal.Notify(signals, syscall.SIGTERM, syscall.SIGINT)
 		sig := <-signals
-		log.Infof("received signal %s, terminating...", sig)
+		log.WithField("signal", sig).Infof("received signal, terminating...")
 		cancel()
 	}()
 
 	azureClient := azureclient.NewFromConfig(ctx, cfg.Azure.TenantID, cfg.Azure.ClientID, cfg.Azure.ClientSecret)
-	metricsTimer := time.NewTimer(1 * time.Second)
+	for {
+		log.Infof("update group member count metrics")
 
-	for ctx.Err() == nil {
+		wg := sync.WaitGroup{}
+		for _, groupID := range cfg.Groups {
+			wg.Add(1)
+			go func(ctx context.Context, groupID uuid.UUID) {
+				defer wg.Done()
+
+				log.WithField("group_id", groupID).Debugf("get group")
+				group, err := azureClient.GetGroup(ctx, groupID)
+				if err != nil {
+					log.WithError(err).Errorf("get group")
+					return
+				}
+
+				log.WithFields(logrus.Fields{
+					"group_id":    groupID,
+					"num_members": group.NumMembers,
+				}).Debugf("update group member count")
+				metrics.SetDeveloperCount(group.NumMembers, group.Name, groupID)
+			}(ctx, groupID)
+		}
+
+		wg.Wait()
+		log.Debugf("metrics updated")
+
 		select {
 		case <-ctx.Done():
 			return nil
-
-		case <-metricsTimer.C:
-			log.Infof("update group member count metrics")
-
-			wg := sync.WaitGroup{}
-			for _, groupID := range cfg.Groups {
-				wg.Add(1)
-				go func(ctx context.Context, groupID uuid.UUID) {
-					defer wg.Done()
-
-					log.Debugf("get group with ID: %s", groupID)
-					group, err := azureClient.GetGroup(ctx, groupID)
-					if err != nil {
-						log.WithError(err).Errorf("get group")
-						return
-					}
-
-					log.Debugf("update group member count: %s -> %d", groupID, group.NumMembers)
-					metrics.SetDeveloperCount(group.NumMembers, group.Name)
-				}(ctx, groupID)
-			}
-
-			wg.Wait()
-			log.Debugf("metrics updated, next update at %s...", time.Now().Add(updateMetricsInterval))
-			metricsTimer.Reset(updateMetricsInterval)
+		case <-time.After(updateMetricsInterval):
 		}
 	}
-
-	return nil
 }
 
 func getHttpServer(addr string) *http.Server {

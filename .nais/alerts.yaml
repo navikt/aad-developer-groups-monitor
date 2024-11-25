@@ -9,17 +9,19 @@ spec:
   groups:
     - name: aad-developer-groups-update-alert
       rules:
-        - alert: Developer group changed
+        - alert: Rapid change of members in developer group
           expr: abs(delta(navikt_aad_developer_groups_monitor_developers[10m])) > 5
           for: 5m
           annotations:
-            consequence: |
-              Developer group "\{{ $labels.group_name }}" has had a rapid change in member count
+            summary: >-
+              Someone has changed the data in AD or one of the other systems that identifies our developers. To fix
+              the issue please check the values in the dynamic query for the `{{ $labels.group_name }}` group.
+              
+              The ID of the group is `{{ $labels.group_id }}`.
+            consequence: |-
+              Developers might lose access to one or more services if they are removed from the developers groups.
             action: |
-              Check dynamic query for the "\{{ $labels.group_name }}" group
-            summary: |-
-              Someone :tm: has changed the data in AD or one of the other systems that identifies our developers. To fix
-              the issue please check the values in the dynamic query for the *\{{ $labels.group_name }}* group.
+              Check dynamic query for the `{{ $labels.group_name }}` group with the ID `{{ $labels.group_id }}`.
           labels:
             namespace: utvikleropplevelse
             severity: critical
