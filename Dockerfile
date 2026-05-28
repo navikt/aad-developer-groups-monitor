@@ -4,7 +4,7 @@ WORKDIR /src
 COPY go.* ./
 RUN go mod download
 COPY . /src
-RUN go build -o ./bin/monitor ./cmd/monitor
+RUN go build -o ./bin/monitor ./main.go
 
 FROM gcr.io/distroless/base
 WORKDIR /app
