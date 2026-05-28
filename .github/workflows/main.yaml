@@ -6,6 +6,9 @@ on:
       - main
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   checks:
     name: Run checks
