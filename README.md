@@ -1,7 +1,5 @@
 # Entra ID developer groups monitor
 
-[![Build, push and deploy](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/main.yaml/badge.svg)](https://github.com/navikt/aad-developer-groups-monitor/actions/workflows/main.yaml)
-
 Provide member count metrics for the developer groups in Azure AD.
 
 ## Developer groups
