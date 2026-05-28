@@ -2,4 +2,4 @@
 #MISE description="Build go code"
 set -euo pipefail
 
-go build -o ./bin/monitor ./cmd/monitor
+go build -o ./bin/monitor .
