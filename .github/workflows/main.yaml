@@ -26,12 +26,23 @@ jobs:
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # ratchet:jdx/mise-action@v4
       - run: mise run ${{ matrix.mise_task }}
 
+  branch-protection-checkpoint:
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs:
+      - checks
+    name: Branch protection checkpoint
+    steps:
+      - if: ${{ needs.checks.result != 'success' }}
+        run: exit 1
+      - run: echo "All checks and builds passed."
+
   build_and_push:
     if: github.ref == 'refs/heads/main'
     name: Build and push application image to GAR
     runs-on: ubuntu-latest
     needs:
-      - checks
+      - branch-protection-checkpoint
     permissions:
       contents: read
       id-token: write
