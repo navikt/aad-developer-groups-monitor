@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2/clientcredentials"
 	"golang.org/x/oauth2/microsoft"
 )
@@ -24,9 +25,10 @@ type Client interface {
 
 type client struct {
 	client *http.Client
+	log    logrus.FieldLogger
 }
 
-func NewFromConfig(ctx context.Context, tenantID, clientID, clientSecret string) Client {
+func NewFromConfig(ctx context.Context, tenantID, clientID, clientSecret string, log logrus.FieldLogger) Client {
 	endpoint := microsoft.AzureADEndpoint(tenantID)
 	conf := clientcredentials.Config{
 		ClientID:     clientID,
@@ -36,11 +38,11 @@ func NewFromConfig(ctx context.Context, tenantID, clientID, clientSecret string)
 		Scopes:       []string{"https://graph.microsoft.com/.default"},
 	}
 
-	return New(conf.Client(ctx))
+	return New(conf.Client(ctx), log)
 }
 
-func New(c *http.Client) Client {
-	return &client{client: c}
+func New(c *http.Client, log logrus.FieldLogger) Client {
+	return &client{client: c, log: log}
 }
 
 func (s *client) GetGroup(ctx context.Context, groupID uuid.UUID) (*Group, error) {
@@ -62,7 +64,11 @@ func (s *client) GetGroup(ctx context.Context, groupID uuid.UUID) (*Group, error
 		return nil, fmt.Errorf("make request: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			s.log.WithError(err).Error("close response body")
+		}
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -95,7 +101,11 @@ func (s *client) getGroup(ctx context.Context, groupID uuid.UUID) (*Group, error
 		return nil, fmt.Errorf("make request: %w", err)
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		if err := resp.Body.Close(); err != nil {
+			s.log.WithError(err).Error("close response body")
+		}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

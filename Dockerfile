@@ -1,9 +1,9 @@
-ARG GO_VERSION=""
-FROM golang:${GO_VERSION}alpine AS builder
+ARG GO_VERSION="1.26"
+FROM golang:${GO_VERSION} AS builder
 WORKDIR /src
 COPY go.* ./
 RUN go mod download
-COPY . .
+COPY . /src
 RUN go build -o ./bin/monitor ./cmd/monitor
 
 FROM gcr.io/distroless/base
