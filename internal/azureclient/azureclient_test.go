@@ -9,12 +9,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/navikt/aad-developer-groups-monitor/internal/azureclient"
 	"github.com/navikt/aad-developer-groups-monitor/internal/test"
+	logrustest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_GetGroup(t *testing.T) {
 	ctx := context.Background()
 	groupID := uuid.New()
+	log, _ := logrustest.NewNullLogger()
 
 	t.Run("group does not exist", func(t *testing.T) {
 		httpClient := test.NewTestHttpClient(
@@ -25,7 +27,7 @@ func Test_GetGroup(t *testing.T) {
 			},
 		)
 
-		client := azureclient.New(httpClient)
+		client := azureclient.New(httpClient, log)
 		group, err := client.GetGroup(ctx, groupID)
 
 		assert.ErrorContains(t, err, "404 Not Found")
@@ -45,7 +47,7 @@ func Test_GetGroup(t *testing.T) {
 			},
 		)
 
-		client := azureclient.New(httpClient)
+		client := azureclient.New(httpClient, log)
 		group, err := client.GetGroup(ctx, groupID)
 
 		assert.NoError(t, err)

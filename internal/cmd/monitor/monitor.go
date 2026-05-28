@@ -80,7 +80,7 @@ func run(ctx context.Context, cfg *Config, log logrus.FieldLogger) error {
 		cancel()
 	}()
 
-	azureClient := azureclient.NewFromConfig(ctx, cfg.Azure.TenantID, cfg.Azure.ClientID, cfg.Azure.ClientSecret)
+	azureClient := azureclient.NewFromConfig(ctx, cfg.Azure.TenantID, cfg.Azure.ClientID, cfg.Azure.ClientSecret, log)
 	for {
 		log.Infof("update group member count metrics")
 
@@ -123,7 +123,8 @@ func getHttpServer(addr string) *http.Server {
 	r.Handle("/metrics", promhttp.Handler())
 
 	return &http.Server{
-		Addr:    addr,
-		Handler: r,
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: 2 * time.Second,
 	}
 }
